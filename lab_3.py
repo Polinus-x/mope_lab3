@@ -101,7 +101,7 @@ while incrementation:
 
     kohren_exp = max(dispersion) / sum(dispersion)
 
-    if kohren_exp < koh[m]/10000:
+    if kohren_exp < koh[m]/10000 or kohren_exp > 23:
         incrementation = False
         print("Дисперсія однорідна")
         break
