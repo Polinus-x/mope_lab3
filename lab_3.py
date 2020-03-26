@@ -1,14 +1,15 @@
 import random
 import numpy as np
+import math
 
-koh =  [0, 9065, 7679, 6841, 6287, 5892, 5598, 5365, 5175, 5017, 4884]}
+koh =  [0, 9065, 7679, 6841, 6287, 5892, 5598, 5365, 5175, 5017, 4884]
 student = {8: 2.306, 12: 2.179, 16: 2.120, 20: 2.086, 14: 2.064, 28: 2.048}
 
 x1 = [20, 70]
 x2 = [30, 80]
 x3 = [30, 35]
-x_min_aver = (x1[0] + x2[0] + x3[0]) / 3
-x_max_aver = (x1[1] + x2[1] + x3[1]) / 3
+x_min_aver = int((x1[0] + x2[0] + x3[0]) / 3)
+x_max_aver = int((x1[1] + x2[1] + x3[1]) / 3)
 y_min = 200 + x_min_aver
 y_max = 200 + x_max_aver
 
@@ -65,20 +66,20 @@ while incrementation:
         a_duplicate.append(k / n)
         a.append(k / n)
 
-    a12 = (x[1][1] * x[1][2] + x[2][1] * x[2][2] + x[3][1] * x[3][2] + x[4][1] * x[4][2]) / 4
-    a13 = (x[1][1] * x[1][3] + x[2][1] * x[2][3] + x[3][1] * x[3][3] + x[4][1] * x[4][3]) / 4
-    a23 = (x[1][2] * x[1][3] + x[2][2] * x[2][3] + x[3][2] * x[3][3] + x[4][2] * x[4][3]) / 4
+    a12 = (usual_matrix[0][0] * usual_matrix[0][1] + usual_matrix[1][0] * usual_matrix[1][1] + usual_matrix[2][0] * usual_matrix[2][1] + usual_matrix[3][0] * usual_matrix[3][1]) / 4
+    a13 = (usual_matrix[0][0] * usual_matrix[0][2] + usual_matrix[1][0] * usual_matrix[1][2] + usual_matrix[2][0] * usual_matrix[2][2] + usual_matrix[3][0] * usual_matrix[3][2]) / 4
+    a23 = (usual_matrix[0][1] * usual_matrix[0][2] + usual_matrix[1][1] * usual_matrix[1][2] + usual_matrix[2][1] * usual_matrix[2][2] + usual_matrix[3][1] * usual_matrix[3][2]) / 4
 
     my = sum(average_ys) / n
 
 
-    arr0 = [[my, mx[0], mx[1], mx[2]], [a[0], a_duplicate[0], a12, a13], [a[1], a12, a_duplicate[1], a32], [a[2], a13, a23, a_duplicate[2]]]
-    arr1 = [[1, my, mx[1], mx[2]], [mx[0], a[0], a12, a13], [mx[1], a[1], a_duplicate[1], a32], [mx[2], a[2], a23, a_duplicate[2]]]
-    arr2 = [[1, mx[0], my, mx[2]], [mx[0], a_duplicate[0], a[0], a13], [mx[1], a12, a[1], a32], [mx[2], a13, a[2], a_duplicate[2]]]
+    arr0 = [[my, mx[0], mx[1], mx[2]], [a[0], a_duplicate[0], a12, a13], [a[1], a12, a_duplicate[1], a23], [a[2], a13, a23, a_duplicate[2]]]
+    arr1 = [[1, my, mx[1], mx[2]], [mx[0], a[0], a12, a13], [mx[1], a[1], a_duplicate[1], a23], [mx[2], a[2], a23, a_duplicate[2]]]
+    arr2 = [[1, mx[0], my, mx[2]], [mx[0], a_duplicate[0], a[0], a13], [mx[1], a12, a[1], a23], [mx[2], a13, a[2], a_duplicate[2]]]
     arr3 = [[1, mx[0], mx[1], my], [mx[0], a_duplicate[0], a12, a[0]], [mx[1], a12, a_duplicate[1], a[1]], [mx[2], a13, a23, a[2]]]
-    b = [[1, mx[0], mx[1], mx[2]], [mx[0], a_duplicate[0], a12, a13], [mx[1], a12, a_duplicate[1], a32], [mx[2], a13, a23, a_duplicate[2]]]
+    b_m = [[1, mx[0], mx[1], mx[2]], [mx[0], a_duplicate[0], a12, a13], [mx[1], a12, a_duplicate[1], a23], [mx[2], a13, a23, a_duplicate[2]]]
 
-    detb = np.linalg.det(b)
+    detb = np.linalg.det(b_m)
 
     b0 = np.linalg.det(arr0) / detb
     b1 = np.linalg.det(arr1) / detb
@@ -98,29 +99,31 @@ while incrementation:
 
 
 
-    kohren_exp = (dispersion) / sum(dispersion)
+    kohren_exp = max(dispersion) / sum(dispersion)
 
     if kohren_exp < koh[m]/10000:
         incrementation = False
         print("Дисперсія однорідна")
+        break
     else:
         m += 1
         print("Дисперсія неоднорідна")
 
+
     sb = sum(dispersion) / n
     sb_beta2 = sb / (n * m)
-    sb_beta = sqrt(sb_beta2)
+    sb_beta = math.sqrt(sb_beta2)
 
     for i in range(4):
-        b = 0
+        b_else = 0
         for k in range(4):
-            b += average_ys[k] * norm_matrix[i][k]
-        beta.append(b / n)
-        t_kof.append(abs(b) / sb_beta)
+            b_else += average_ys[k] * norm_matrix[i][k]
+        beta.append(b_else / n)
+        t_kof.append(abs(b_else) / sb_beta)
 
     for i in range(4):
         if t_kof[i] < student[f3]:
             b[i] = 0
 
 print(" m = ", m)
-print("рівняння : y = {} + {} * x1 + {} * x2 + {} * x3".format(b[0], b[1], b[2], b[3]))
+print("рівняння : y = {} + {} * x1 + {} * x2 + {} * x3".format(int(b[0]), int(b[1]), int(b[2]), (b[3])))
